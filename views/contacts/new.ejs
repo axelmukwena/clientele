@@ -1,0 +1,60 @@
+<form action="/contacts/create" method="POST">
+  <div class="form-floating mb-3">
+    <input type="text" name='firstname' class="form-control" id="contact-firstname-form" placeholder="Firstname">
+    <label id="contact-firstname-form-label" for="contact-firstname-form">Firstname</label>
+  </div>
+
+  <div class="form-floating mb-3">
+    <input type="text" name='surname' class="form-control" id="contact-surname-form" placeholder="Surname">
+    <label id="contact-surname-form-label" for="contact-surname-form">Surname</label>
+  </div>
+
+  <div class="form-floating mb-3">
+    <input type="email" name='email' class="form-control" id="contact-email-form" placeholder="Email address">
+    <label id="contact-email-form-label" for="contact-email-form">Email address</label>
+  </div>
+
+  <div class="row g-3" style='margin-bottom: 13px;'>
+    <div class="col">
+      <select class="form-select select-clients" aria-label="Default select example">
+        <!-- Dynamically populated -->
+      </select>
+    </div>
+    <div class="col-auto">
+      <button type="submit" class="btn add-client">Add</button>
+    </div>
+  </div>
+
+  <div class='added-clients'>
+    <div id='5e417363316cab53182888d8' class='card added-client'>
+      <div class="d-flex justify-content-between">
+        <small class='added-client-item'>
+          <span style='padding-right: 10px;'>Mark Otto</span>
+          <span>mark.ottorman@gmail.com</span>
+        </small>
+        <small class='added-client-item'>
+          <i class="bi bi-x-square-fill btn remove-client p-0 m-0"></i>
+        </small>
+      </div>
+      <input type="text" value='5e417363316cab53182888d8' name="clients[]" hidden>
+    </div>
+
+    <hr style='color: transparent;'>
+
+    <div id='5e417363316cab53182888d8' class='card added-client'>
+      <div class="d-flex justify-content-between">
+        <small class='added-client-item'>
+          <span style='padding-right: 10px;'>Mark Otto</span>
+          <span>mark.ottorman@gmail.com</span>
+        </small>
+        <small class='added-client-item'>
+          <i class="bi bi-x-square-fill btn remove-client p-0 m-0"></i>
+        </small>
+      </div>
+      <input type="text" value='5e417363316cab53182888d8' name="clients[]" hidden>
+    </div>
+  </div>
+
+  <button onclick='submitNewContact(event)' type="button" class="btn btn-lg submit-add-contact">Add Contact</button>
+  <button type="submit" id="submit-add-contact" class="btn btn-lg submit-add-contact" hidden></button>
+</form>
