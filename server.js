@@ -1,4 +1,4 @@
-// Imports
+// Module Imports
 const express = require('express');
 
 const app = express();
@@ -10,7 +10,7 @@ const expressLayouts = require('express-ejs-layouts');
 dotenv.config();
 mongoose.Promise = global.Promise;
 
-// Mongo DB connection
+// Mongo DB connection and initialization
 const database = process.env.MONGOLAB_URI;
 mongoose.connect(database, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => console.log('Database Connected'))
@@ -31,7 +31,7 @@ app.use(express.json());
 // Initialize Routes
 app.use('/', require('./routes/routes'));
 
-// Listen on Port 2021
+// Listen on Port 2021, Eureka!
 const PORT = process.env.PORT || 2021;
 app.listen(
   PORT,

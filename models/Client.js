@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+// Autopopulate is simply a serializer.
+// It allows getting full resources of referenced IDs, in this case contacts
 const ClientSchema = new mongoose.Schema({
   name: {
     type: String,

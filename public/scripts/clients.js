@@ -3,6 +3,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 
+// when you click the close/x on the side bar
 function closeClientSideBar() {
   // Adjust clientList panel
   const clientList = document.querySelector('.client-list');
@@ -19,33 +20,12 @@ function closeClientSideBar() {
   clientContacts.style.display = 'none';
 }
 
-function unlinkContact(id) {
-  // e.preventDefault();
-  console.log(id);
-  const submit = document.getElementById(`client-unlink-${id}`);
-  submit.click();
-  /* fetch('/clients/unlink', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({
-      clientID,
-      contactID,
-    }),
-  })
-    .then((res) => {
-      if (res.ok) return res.json();
-    })
-    .then((data) => {
-      console.log(data);
-      // window.location.reload();
-    }); */
-}
-
-// Helper to show list of contacts on client's click
+// Helper to show the list of contacts when a client is click
 function handleShowContacts(clientID, name, contacts) {
   const title = document.querySelector('.client-contacts-title');
   const table = document.querySelector('.contacts-table');
 
+  // Toggle table vissibility based on clients count
   if (contacts.length > 0) {
     title.innerHTML = `${name} has ${contacts.length} contacts`;
     table.style.display = 'table';
@@ -55,6 +35,7 @@ function handleShowContacts(clientID, name, contacts) {
     return;
   }
 
+  // Dynamically generating tables, contacts for a client
   const tableData = contacts.map((contact) => (
     `<tr">
       <td>${contact.surname}</td>
@@ -77,10 +58,11 @@ function handleShowContacts(clientID, name, contacts) {
   tableBody.innerHTML = tableData;
 }
 
+// Called when you click on a client
 function showClientsContacts(id, name, contacts) {
   contacts = JSON.parse(contacts);
 
-  // Highlight selected row
+  // Highlight selected card
   const activeClient = document.querySelector('.active-client');
   if (activeClient) {
     activeClient.className = 'card shadow-sm';
@@ -110,7 +92,7 @@ function removeAddedContact(id) {
   client.parentNode.removeChild(client);
 }
 
-// get the value of the selected option and add a client below
+// get the value of the selected option and append a contact
 function selectContact() {
   const select = document.querySelector('.select-contacts');
   const { value } = select.options[select.selectedIndex];
@@ -177,6 +159,7 @@ function createCode(name) {
 
   // Depending on the length of the name,
   // parse to get 3 Characters
+  // The name input should be 3 characters or more
   let code;
   if (items.length > 2) {
     code = items[0][0] + items[1][0] + items[2][0];
@@ -228,6 +211,7 @@ function validation(name, label, nameInput) {
   return true;
 }
 
+// Called when you click submit to create new client
 // Before submit, update hidden elements
 function submitNewClient(e) {
   const nameInput = document.getElementById('client-name-form');
@@ -247,6 +231,7 @@ function submitNewClient(e) {
   const codeElement = document.getElementById('client-code-form');
   codeElement.value = code;
 
+  // Finally, submit
   const submit = document.getElementById('submit-add-client');
   submit.click();
 }

@@ -2,18 +2,22 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-plusplus */
 
+// Importing mainly models schemas
 const Client = require('../models/Client');
 const ClientCount = require('../models/ClientCount');
 const Contact = require('../models/Contact');
 
-// Render all clients
+// Clients index method: Displaying all the clients
 const clientsIndex = (req, res) => {
+  // Find all, sorted ascending per attribute (name)
   Client.find({}).sort({ name: 'asc' }).exec(
     (clientsError, clients) => {
       if (clients) {
+        // Also load up all contacts to populate select options later in views
         Contact.find({}).sort({ surname: 'asc', firstname: 'asc' }).exec(
           (contactsError, contacts) => {
             if (contacts) {
+              // Render view, send through locals/variables
               res.render('clients/index', { title: 'Clientele | Clients', clients, contacts });
             } else {
               console.log(contactsError);
@@ -27,18 +31,22 @@ const clientsIndex = (req, res) => {
   );
 };
 
+// Formating hundredth digit. E.g 34 => 034, 6 => 006
 function pad(n, length) {
   let len = length - (`${n}`).length;
   return (len > 0 ? new Array(++len).join('0') : '') + n;
 }
 
+// Creating client document in Mongo
 function handleCreation(name, code, count, contacts, res) {
+  // Validate with schema
   const newClient = new Client({
     name,
     code: code + count,
     contacts,
   });
 
+  // Save new resource
   newClient.save((error, data) => {
     if (error) {
       console.log(error);
@@ -52,17 +60,19 @@ function handleCreation(name, code, count, contacts, res) {
   });
 }
 
-// Post a new client to the database
+// Main create client method
+// App will only route when response is successful
 const createClient = (req, res) => {
   const { name, code, contacts } = req.body;
 
+  // Validate the presence of key params
   if (!name || !code) {
     console.log('');
     console.log('Client name is empty');
     console.log('');
     res.status(204).send();
   } else {
-    // Validation
+    // Check if item with `code` value already exists
     Client.findOne({ code }).then((client) => {
       if (client) {
         console.log('');
@@ -70,9 +80,10 @@ const createClient = (req, res) => {
         console.log('');
         res.status(204).send();
       } else {
-        // update count and get the count value to attach
-        // to client code
+        // Update count value
+        // Attach the count value to code => AAB001
         ClientCount.findOne({ name: 'counter' }, (findError, counter) => {
+          // If client counter already exists, just update
           if (counter) {
             counter.count += 1;
             counter.save()
@@ -89,6 +100,7 @@ const createClient = (req, res) => {
                 res.status(204).send();
               });
           } else {
+            // If no client counter, create one
             const newCount = new ClientCount({
               name: 'counter',
               count: 1,
@@ -115,10 +127,13 @@ const createClient = (req, res) => {
   }
 };
 
+// Unlink associated contacts from a client resource
 const deleteClientsContact = (req, res) => {
   const { clientID, contactID } = req.body;
+  // First, find the Client
   Client.findById(clientID, (clientError, client) => {
     if (client) {
+      // Then remove the contact we wish to unlink, and save/update
       client.contacts.pull(contactID);
       client.save()
         .then(() => {

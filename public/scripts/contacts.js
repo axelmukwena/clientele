@@ -18,11 +18,12 @@ function closeContactSideBar() {
   contactClients.style.display = 'none';
 }
 
-// Helper to show list of clients on contact's click
+// Helper to show the list of clients when a contact is clicked
 function handleShowClients(contactID, firstname, clients) {
   const title = document.querySelector('.contact-clients-title');
   const table = document.querySelector('.clients-table');
 
+  // Toggle table vissibility based on clients count
   if (clients.length > 0) {
     title.innerHTML = `${firstname} has ${clients.length} clients`;
     table.style.display = 'table';
@@ -31,6 +32,7 @@ function handleShowClients(contactID, firstname, clients) {
     table.style.display = 'none';
   }
 
+  // Table to populate cleints belonging to selected contact
   const tableData = clients.map((client) => (
     `<tr>
       <td>${client.name}</td>
@@ -52,6 +54,7 @@ function handleShowClients(contactID, firstname, clients) {
   tableBody.innerHTML = tableData;
 }
 
+// Called when you click on a contact
 function showContactsClients(id, firstname, clients) {
   clients = JSON.parse(clients);
 
@@ -85,7 +88,7 @@ function removeAddedClient(id) {
   client.parentNode.removeChild(client);
 }
 
-// get the value of the selected option and add a client below
+// get the value of the selected option and append a client
 function selectClient() {
   const select = document.querySelector('.select-clients');
   const { value } = select.options[select.selectedIndex];
@@ -120,6 +123,7 @@ function populateSelectClient(clients) {
   select.innerHTML = defaultOption + selectData;
 }
 
+// Creating a new contact
 function showAddContactForm(clients) {
   // Populate clients select option
   clients = JSON.parse(clients);
@@ -140,6 +144,7 @@ function showAddContactForm(clients) {
   contactAdd.style.display = 'block';
 }
 
+// Validate email format
 function emailValidation(email, label, input) {
   // Empty field validation
   if (email.length === 0) {
@@ -216,6 +221,7 @@ function submitNewContact(e) {
     return;
   }
 
+  // Finally, submit
   const submit = document.getElementById('submit-add-contact');
   submit.click();
 }

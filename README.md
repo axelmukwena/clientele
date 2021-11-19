@@ -7,7 +7,8 @@
     # v16.9.1
 
 ### Instructions
-Clone this repository and go to project directory
+- Clone this repository and go to project directory
+- Install 
 
     $ npm start
 
