@@ -52,7 +52,7 @@ hr {
 
 .client-list, .contact-list {
   height: 100%;
-  width: 60%;
+  width: 100%;
   overflow-x: hidden;
   transition: width 0.5s;
 }
@@ -74,8 +74,8 @@ hr {
   overflow-x: hidden;
   transition: width 0.5s;
   cursor: default;
-  width: 38%;
-  display: block;
+  width: 0%;
+  display: none;
   background-color: #f8f9fa;
 }
 
@@ -103,7 +103,7 @@ hr {
 }
 
 .card.added-contact, .card.added-client {
-  margin: 0;
+  margin: 0 0 10px 0;
   width: 100%;
   padding: 8px 13px 6px 13px;
   cursor: default;
@@ -114,7 +114,7 @@ hr {
 }
 
 .submit-add-client, .submit-add-contact {
-  margin-top: 20px;
+  margin-top: 12px;
   background-color: #404040;
   color: white;
   width: 100%;
@@ -160,11 +160,12 @@ hr {
 .btn-new-contact {
   background-color: #404040;
   color: white;
-  width: 30%; 
+  width: 40%; 
   border-radius: 4px;
   float: right;
   margin-right: 8px;
   font-size: 18px;
+  margin-bottom: 5px;
 }
 
 .btn-new-contact:hover {

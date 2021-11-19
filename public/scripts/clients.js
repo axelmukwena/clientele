@@ -1,3 +1,5 @@
+/* eslint-disable consistent-return */
+/* eslint-disable no-underscore-dangle */
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 
@@ -17,8 +19,66 @@ function closeClientSideBar() {
   clientContacts.style.display = 'none';
 }
 
-function showClientsContacts(id, name, contactsID) {
-  console.log(name, contactsID.split(','));
+function unlinkContact(id) {
+  // e.preventDefault();
+  console.log(id);
+  const submit = document.getElementById(`client-unlink-${id}`);
+  submit.click();
+  /* fetch('/clients/unlink', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({
+      clientID,
+      contactID,
+    }),
+  })
+    .then((res) => {
+      if (res.ok) return res.json();
+    })
+    .then((data) => {
+      console.log(data);
+      // window.location.reload();
+    }); */
+}
+
+// Helper to show list of contacts on client's click
+function handleShowContacts(clientID, name, contacts) {
+  const title = document.querySelector('.client-contacts-title');
+  const table = document.querySelector('.contacts-table');
+
+  if (contacts.length > 0) {
+    title.innerHTML = `${name} has ${contacts.length} contacts`;
+    table.style.display = 'table';
+  } else {
+    title.innerHTML = 'No contacts found.';
+    table.style.display = 'none';
+    return;
+  }
+
+  const tableData = contacts.map((contact) => (
+    `<tr">
+      <td>${contact.surname}</td>
+      <td>${contact.firstname}</td>
+      <td>${contact.email}</td>
+      <td>
+        <form action="/clients/unlink" method="POST">
+          <input type="text" value="${clientID}" name="clientID" hidden>
+          <input type="text" value="${contact._id}" name="contactID" hidden>
+          <button type="submit" class="btn" style="padding: 0;">
+            <a href="/clients/unlink" style="color: black;">
+              <i class="bi bi-x-square-fill remove-contact p-0 m-0"></i>
+            </a>
+          </button>
+        </form>
+      </td>
+    </tr>`
+  )).join('');
+  const tableBody = document.querySelector('.contact-table-tbody');
+  tableBody.innerHTML = tableData;
+}
+
+function showClientsContacts(id, name, contacts) {
+  contacts = JSON.parse(contacts);
 
   // Highlight selected row
   const activeClient = document.querySelector('.active-client');
@@ -26,6 +86,8 @@ function showClientsContacts(id, name, contactsID) {
     activeClient.className = 'card shadow-sm';
   }
   document.getElementById(id).className = 'active-client card shadow-sm';
+
+  handleShowContacts(id, name, contacts);
 
   // Adjust clientList panel
   const clientList = document.querySelector('.client-list');
@@ -42,7 +104,52 @@ function showClientsContacts(id, name, contactsID) {
   clientContacts.style.display = 'block';
 }
 
-function showAddClientForm() {
+// Remove client from added list
+function removeAddedContact(id) {
+  const client = document.getElementById(id);
+  client.parentNode.removeChild(client);
+}
+
+// get the value of the selected option and add a client below
+function selectContact() {
+  const select = document.querySelector('.select-contacts');
+  const { value } = select.options[select.selectedIndex];
+
+  if (value) {
+    const contact = JSON.parse(value);
+    const addedContact = `<div id='contact-${contact._id}' class='card added-contact'>
+  <div class="d-flex justify-content-between">
+        <small class='added-contact-item'>
+          <span style='padding-right: 20px;'>${contact.surname} ${contact.firstname}</span>
+          <span>${contact.email}</span>
+        </small>
+        <small class='added-contact-item'>
+          <i onclick="removeAddedContact('contact-${contact._id}')" class="bi bi-x-square-fill btn remove-client p-0 m-0"></i>
+        </small>
+      </div>
+      <input type="text" value='${contact._id}' name="contacts[]" hidden>
+    </div>`;
+
+    const addedContacts = document.querySelector('.added-contacts');
+    addedContacts.innerHTML += addedContact;
+  }
+}
+
+// Populate clients select option
+function populateSelectContact(contacts) {
+  const defaultOption = '<option value="">Select contacts</option>';
+  const selectData = contacts.map((contact) => (
+    `<option id="option-${contact._id}" value='${JSON.stringify(contact)}'>${contact.surname} ${contact.firstname}</option>`
+  )).join('');
+  const select = document.querySelector('.select-contacts');
+  select.innerHTML = defaultOption + selectData;
+}
+
+function showAddClientForm(contacts) {
+  // Populate contacts select option
+  contacts = JSON.parse(contacts);
+  populateSelectContact(contacts);
+
   // Adjust clientList panel
   const clientList = document.querySelector('.client-list');
   clientList.style.width = '60%';

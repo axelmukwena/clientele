@@ -8,46 +8,17 @@
 
   <div class="row g-3" style='margin-bottom: 13px;'>
     <div class="col">
-      <select class="form-select" aria-label="Default select example">
-        <option selected>Select contacts</option>
-        <option value="1">One</option>
-        <option value="2">Two</option>
-        <option value="3">Three</option>
+      <select class="form-select select-contacts" aria-label="Default select example">
+        <!-- Dynamically populated -->
       </select>
     </div>
     <div class="col-auto">
-      <button type="submit" class="btn add-contact">Add</button>
+      <button onclick='selectContact()' type="button" class="btn add-contact">Add</button>
     </div>
   </div>
 
   <div class='added-contacts'>
-    <div id='5e417363316cab53182888d8' class='card added-contact'>
-      <div class="d-flex justify-content-between">
-        <small class='added-contact-item'>
-          <span style='padding-right: 10px;'>Mark Otto</span>
-          <span>mark.ottorman@gmail.com</span>
-        </small>
-        <small class='added-contact-item'>
-          <i class="bi bi-x-square-fill btn remove-contact p-0 m-0"></i>
-        </small>
-      </div>
-      <input type="text" value='5e417363316cab53182888d8' name="contacts[]" hidden>
-    </div>
-
-    <hr style='color: transparent;'>
-
-    <div id='5e417363316cab53182888da' class='card added-contact'>
-      <div class="d-flex justify-content-between">
-        <small class='added-contact-item'>
-          <span style='padding-right: 10px;'>Axel Mukwena</span>
-          <span>axel.muk@gmail.com</span>
-        </small>
-        <small class='added-contact-item'>
-          <i class="bi bi-x-square-fill btn remove-contact p-0 m-0"></i>
-        </small>
-      </div>
-      <input type="text" value='5e417363316cab53182888da' name="contacts[]" hidden>
-    </div>
+    <!-- Dynamically populated -->
   </div>
 
   <button onclick='submitNewClient(event)' type="button" class="btn btn-lg submit-add-client">Add Client</button>

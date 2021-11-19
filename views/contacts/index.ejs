@@ -1,6 +1,9 @@
 <div class='contact-list'>
   <div class='row' style='margin-top: 27px;'>
 
+    <% if (contacts.length <= 0) { %>
+      <h2 style='width: fit-content;'>No contact(s) found.</h2>
+    <% } %>
     <div class='col align-self-end'>
       <!-- Add New Client Button--> 
       <button onclick="showAddContactForm('<%= JSON.stringify(clients) %>')" class="btn btn-lg btn-new-contact">
@@ -8,12 +11,13 @@
       </button>
     </div>
 
+    <% if (contacts.length > 0) { %>
     <!-- List of Clients -->
     <table class="table table-hover">
       <thead>
         <tr>
-          <th scope="col">Firstname</th>
           <th scope="col">Surname</th>
+          <th scope="col">Firstname</th>
           <th scope="col">Email</th>
           <th style='text-align: center;' scope="col">Clients</th>
         </tr>
@@ -21,14 +25,15 @@
       <tbody>
         <% for (contact of contacts) { %>
           <tr id='<%=contact._id%>' onclick="showContactsClients('<%=contact._id%>', '<%= contact.firstname %>', '<%= JSON.stringify(contact.clients) %>')">
-            <td><%= contact.firstname %></td>
             <td><%= contact.surname %></td>
+            <td><%= contact.firstname %></td>
             <td><%= contact.email %></td>
             <td style='text-align: center;'><%= contact.clients.length %></td>
           </tr>
         <% } %>
       </tbody>
-    </table>
+    </table>      
+    <% } %>
     
   </div>
 </div>

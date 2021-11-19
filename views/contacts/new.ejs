@@ -21,38 +21,12 @@
       </select>
     </div>
     <div class="col-auto">
-      <button type="submit" class="btn add-client">Add</button>
+      <button onclick='selectClient()' type="button" class="btn add-client">Add</button>
     </div>
   </div>
 
   <div class='added-clients'>
-    <div id='5e417363316cab53182888d8' class='card added-client'>
-      <div class="d-flex justify-content-between">
-        <small class='added-client-item'>
-          <span style='padding-right: 10px;'>Mark Otto</span>
-          <span>mark.ottorman@gmail.com</span>
-        </small>
-        <small class='added-client-item'>
-          <i class="bi bi-x-square-fill btn remove-client p-0 m-0"></i>
-        </small>
-      </div>
-      <input type="text" value='5e417363316cab53182888d8' name="clients[]" hidden>
-    </div>
-
-    <hr style='color: transparent;'>
-
-    <div id='5e417363316cab53182888d8' class='card added-client'>
-      <div class="d-flex justify-content-between">
-        <small class='added-client-item'>
-          <span style='padding-right: 10px;'>Mark Otto</span>
-          <span>mark.ottorman@gmail.com</span>
-        </small>
-        <small class='added-client-item'>
-          <i class="bi bi-x-square-fill btn remove-client p-0 m-0"></i>
-        </small>
-      </div>
-      <input type="text" value='5e417363316cab53182888d8' name="clients[]" hidden>
-    </div>
+    <!-- Dynamically populated -->
   </div>
 
   <button onclick='submitNewContact(event)' type="button" class="btn btn-lg submit-add-contact">Add Contact</button>

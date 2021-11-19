@@ -14,7 +14,7 @@ const ClientSchema = new mongoose.Schema({
     {
       type: mongoose.Schema.Types.ObjectId,
       ref: 'Contact',
-      autopopulate: true,
+      autopopulate: { options: { sort: { surname: 'asc', firstname: 'asc' } } },
     },
   ],
 });

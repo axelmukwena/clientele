@@ -4,16 +4,27 @@
 
 const Client = require('../models/Client');
 const ClientCount = require('../models/ClientCount');
+const Contact = require('../models/Contact');
 
 // Render all clients
 const clientsIndex = (req, res) => {
-  Client.find((clientsError, clients) => {
-    if (clients) {
-      res.render('clients/index', { title: 'Clientele | Clients', clients });
-    } else {
-      console.log(clientsError);
-    }
-  });
+  Client.find({}).sort({ name: 'asc' }).exec(
+    (clientsError, clients) => {
+      if (clients) {
+        Contact.find({}).sort({ surname: 'asc', firstname: 'asc' }).exec(
+          (contactsError, contacts) => {
+            if (contacts) {
+              res.render('clients/index', { title: 'Clientele | Clients', clients, contacts });
+            } else {
+              console.log(contactsError);
+            }
+          },
+        );
+      } else {
+        console.log(clientsError);
+      }
+    },
+  );
 };
 
 function pad(n, length) {
@@ -22,7 +33,6 @@ function pad(n, length) {
 }
 
 function handleCreation(name, code, count, contacts, res) {
-  // Validation
   const newClient = new Client({
     name,
     code: code + count,
@@ -105,7 +115,28 @@ const createClient = (req, res) => {
   }
 };
 
+const deleteClientsContact = (req, res) => {
+  const { clientID, contactID } = req.body;
+  Client.findById(clientID, (clientError, client) => {
+    if (client) {
+      client.contacts.pull(contactID);
+      client.save()
+        .then(() => {
+          res.redirect('/');
+        })
+        .catch((savedError) => {
+          console.log(savedError);
+          res.status(204).send();
+        });
+    } else {
+      console.log(clientError);
+      res.status(204).send();
+    }
+  });
+};
+
 module.exports = {
   clientsIndex,
   createClient,
+  deleteClientsContact,
 };
