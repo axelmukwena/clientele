@@ -7,39 +7,40 @@
     # v16.9.1
 
 ### How to setup and run
-- Clone this repository and go to project directory
+1. Clone this repository and go to project directory
 
-      $ cd path/clientele
+        $ cd path/clientele
 
-- Install the modules and dependecies
+1. Install the modules and dependecies
 
-      $ npm install
+        $ npm install
 
-- MongoDB connection string
-
-      # server.js
+1. MongoDB connection string. Specified in the `server.js` file
       
-      const database = process.env.MONGOLAB_URI;
+        const database = process.env.MONGOLAB_URI;
 
-- Specify MongoDB api connection string. Since I'm using the cloud based platform, I can **provide** my `connection string`.
+1. I'm using the cloud based plartform, if need be I can **provide** my `connection string` for temporary use.
 
-      'mongodb+srv://<username>:<password>@<clustername>-rmp3c.mongodb.net/database?retryWrites=true&w=majority'
+1. I placed mine in an `.env` file, which is not present in this folder.
 
-      <password>: password123
-      <clustername>: Cluster
+1. An alternative, go to MongoDB, setup free account, set up a cluster, get connection string and update in `server.js`
 
-      # DB created automatically if you set the name
-      database: db_name
+1. Be sure to update the variables in the connection string:
 
-- I placed mine in an `.env` file.
+        'mongodb+srv://<username>:<password>@<clustername>-rmp3c
+        .mongodb.net/database?retryWrites=true&w=majority'
+        
+        --------------------------------
+        <password>: password123
+        <clustername>: Cluster
+        database: db_name
+1. DB is created automatically based on the name you want `db_name`
 
-- Or just go to MongoDB, setup free account, set up a cluster, get connection string and update in `server.js`
+1. Make sure port `2021` is available, or change port in `server.js` file
 
-- Make sure port `2021` is available, or change port in `server.js` file
+        $ npm start
 
-      $ npm start
-
-- Everything should be working perfectly
+1. Everything should be working perfectly
 
 # Developement
 
