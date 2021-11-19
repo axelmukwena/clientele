@@ -6,11 +6,40 @@
     $ node -v
     # v16.9.1
 
-### Instructions
+### How to setup and run
 - Clone this repository and go to project directory
-- Install 
 
-    $ npm start
+      $ cd path/clientele
+
+- Install the modules and dependecies
+
+      $ npm install
+
+- MongoDB connection string
+
+      # server.js
+      
+      const database = process.env.MONGOLAB_URI;
+
+- Specify MongoDB api connection string. Since I'm using the cloud based platform, I can **provide** my `connection string`.
+
+      'mongodb+srv://<username>:<password>@<clustername>-rmp3c.mongodb.net/database?retryWrites=true&w=majority'
+
+      <password>: password123
+      <clustername>: Cluster
+
+      # DB created automatically if you set the name
+      database: db_name
+
+- I placed mine in an `.env` file.
+
+- Or just go to MongoDB, setup free account, set up a cluster, get connection string and update in `server.js`
+
+- Make sure port `2021` is available, or change port in `server.js` file
+
+      $ npm start
+
+- Everything should be working perfectly
 
 # Developement
 
