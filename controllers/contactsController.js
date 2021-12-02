@@ -9,19 +9,25 @@ const contactsIndex = (req, res) => {
   Contact.find({}).sort({ surname: 'asc', firstname: 'asc' }).exec(
     (contactsError, contacts) => {
       if (contacts) {
-        // Also load clients to populate select option views
-        Client.find({}).sort({ name: 'asc' }).exec(
-          (clientsError, clients) => {
-            if (clients) {
-              // Render view, send through locals/variables
-              res.render('contacts/index', { title: 'Clientele | Contacts', contacts, clients });
-            } else {
-              console.log(clientsError);
-            }
-          },
-        );
+        // Render view, send through locals/variables
+        res.render('contacts/index', { title: 'Clientele | Contacts', contacts });
       } else {
         console.log(contactsError);
+      }
+    },
+  );
+};
+
+// Clients index method: Populating select client
+const populateClients = (req, res) => {
+  // Find all, sorted ascending per attribute (surname and firstname)
+  Client.find({}).sort({ name: 'asc' }).exec(
+    (clientsError, clients) => {
+      if (clients) {
+        // Render view, send through locals/variables
+        res.json({ success: true, clients });
+      } else {
+        console.log(clientsError);
       }
     },
   );
@@ -36,18 +42,13 @@ const createContact = (req, res) => {
 
   // Validate presence of required params
   if (!firstname || !surname || !email) {
-    console.log('');
-    console.log('Firstname, surname and/or email are/is empty');
-    console.log('');
-    res.status(204).send();
+    res.json({ success: false, class: 'danger', message: 'Firstname, surname or email is empty!' });
   } else {
     // Validation, check by email if document already exits
-    Contact.findOne({ email }).then((contact) => {
-      if (contact) {
-        console.log('');
-        console.log('Contact already exists!');
-        console.log('');
-        res.status(204).send();
+    Contact.findOne({ email }).then((contactExist) => {
+      if (contactExist) {
+        // Respond with json. Please see ajax requests in public/scripts/contacts
+        res.json({ success: false, class: 'danger', message: `${email} already exists!` });
       } else {
         // Validate with schema structure
         const newContact = new Contact({
@@ -55,15 +56,15 @@ const createContact = (req, res) => {
         });
 
         // Finally, save new contact
-        newContact.save((error, data) => {
+        newContact.save((error, contact) => {
           if (error) {
-            console.log(error);
-            res.status(204).send();
+            // Respond with json. Please see ajax requests in public/scripts/contacts
+            res.json({ success: false, class: 'danger', message: error });
           } else {
-            console.log('');
-            console.log(data);
-            console.log('');
-            res.redirect('/contacts');
+            // Respond with json. Please see ajax requests in public/scripts/contacts
+            res.json({
+              success: true, class: 'success', message: `${contact.firstname} created!`, contact,
+            });
           }
         });
       }
@@ -72,7 +73,7 @@ const createContact = (req, res) => {
 };
 
 // Unlink associated clients from a contact resource
-const deleteContactsClient = (req, res) => {
+const unlinkContactsClient = (req, res) => {
   const { contactID, clientID } = req.body;
   // First, find the contact
   Contact.findById(contactID, (contactError, contact) => {
@@ -81,15 +82,30 @@ const deleteContactsClient = (req, res) => {
       contact.clients.pull(clientID);
       contact.save()
         .then(() => {
-          res.redirect('/contacts');
+          // Respond with json. Please see ajax requests in public/scripts/contacts
+          res.json({ success: true, class: 'success', message: 'Contact\'s client removed!' });
         })
         .catch((savedError) => {
-          console.log(savedError);
-          res.status(204).send();
+          // Respond with json. Please see ajax requests in public/scripts/contacts
+          res.json({ success: false, class: 'danger', message: savedError });
         });
     } else {
+      // Respond with json. Please see ajax requests in public/scripts/contacts
+      res.json({ success: false, class: 'danger', message: contactError });
+    }
+  });
+};
+
+// Get one contact
+const getOneContact = (req, res) => {
+  const { id } = req.body;
+  // Find contact
+  Contact.findById(id, (contactError, contact) => {
+    if (contact) {
+      // Also load clients to populate select option views
+      res.json({ success: true, contact });
+    } else {
       console.log(contactError);
-      res.status(204).send();
     }
   });
 };
@@ -97,5 +113,7 @@ const deleteContactsClient = (req, res) => {
 module.exports = {
   contactsIndex,
   createContact,
-  deleteContactsClient,
+  unlinkContactsClient,
+  getOneContact,
+  populateClients,
 };

@@ -3,6 +3,23 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 
+// Toasting/flashing notifications set
+function handleNotification(classType, message) {
+  const container = document.getElementById('toast-flash');
+  container.className = `toast align-items-center text-white bg-${classType} border-0`;
+
+  const body = document.getElementById('toast-body');
+  body.innerHTML = message;
+
+  // eslint-disable-next-line no-undef
+  const toast = new bootstrap.Toast(
+    document.querySelector('.toast'),
+    { autohide: false },
+  );
+
+  toast.show();
+}
+
 // when you click the close/x on the side bar
 function closeClientSideBar() {
   // Adjust clientList panel
@@ -20,6 +37,33 @@ function closeClientSideBar() {
   clientContacts.style.display = 'none';
 }
 
+// Unlink contact from client
+function unlinkContact(name, clientID, contactID) {
+  const data = { contactID, clientID };
+
+  $.ajax({
+    url: '/clients/unlink',
+    data,
+    method: 'POST',
+  }).then((response) => {
+    handleNotification(response.class, response.message);
+    if (response.success) {
+      // Remove unlinked client from showContactsClients table
+      const unlinked = document.getElementById(`linked-${contactID}`);
+      unlinked.parentNode.removeChild(unlinked);
+
+      // Reduce client count of contact
+      const contactCountElement = document.getElementById(`client-contact-count-${clientID}`);
+      let count = contactCountElement.innerHTML;
+      count = parseInt(count, 10) - 1;
+      contactCountElement.innerHTML = count;
+
+      const title = document.querySelector('.client-contacts-title');
+      title.innerHTML = `${name} has ${count} contacts(s)`;
+    }
+  });
+}
+
 // Helper to show the list of contacts when a client is click
 function handleShowContacts(clientID, name, contacts) {
   const title = document.querySelector('.client-contacts-title');
@@ -27,40 +71,46 @@ function handleShowContacts(clientID, name, contacts) {
 
   // Toggle table vissibility based on clients count
   if (contacts.length > 0) {
-    title.innerHTML = `${name} has ${contacts.length} contacts`;
+    title.innerHTML = `${name} has ${contacts.length} contact(s)`;
     table.style.display = 'table';
   } else {
-    title.innerHTML = 'No contacts found.';
+    title.innerHTML = 'No contact(s) found.';
     table.style.display = 'none';
     return;
   }
 
   // Dynamically generating tables, contacts for a client
   const tableData = contacts.map((contact) => (
-    `<tr">
+    `<tr id="linked-${contact._id}">
       <td>${contact.surname}</td>
       <td>${contact.firstname}</td>
       <td>${contact.email}</td>
       <td>
-        <form action="/clients/unlink" method="POST">
-          <input type="text" value="${clientID}" name="clientID" hidden>
-          <input type="text" value="${contact._id}" name="contactID" hidden>
-          <button type="submit" class="btn" style="padding: 0;">
-            <a href="/clients/unlink" style="color: black;">
-              <i class="bi bi-x-square-fill remove-contact p-0 m-0"></i>
-            </a>
+        <button onclick="unlinkContact( '${name}', '${clientID}', '${contact._id}')" type="button" class="btn" style="padding: 0;">
+            <i class="bi bi-x-square-fill remove-client p-0 m-0"></i>
           </button>
-        </form>
       </td>
     </tr>`
   )).join('');
-  const tableBody = document.querySelector('.contact-table-tbody');
+  const tableBody = document.querySelector('.client-contacts-tbody');
   tableBody.innerHTML = tableData;
 }
 
 // Called when you click on a client
-function showClientsContacts(id, name, contacts) {
-  contacts = JSON.parse(contacts);
+function showClientsContacts(id) {
+  // Get all the contacts associated with the client
+  const data = { id };
+  $.ajax({
+    url: '/client',
+    data,
+    method: 'POST',
+  }).then((response) => {
+    if (response.success) {
+      const { contacts } = response.client;
+      const { name } = response.client;
+      handleShowContacts(id, name, contacts);
+    }
+  });
 
   // Highlight selected card
   const activeClient = document.querySelector('.active-client');
@@ -68,8 +118,6 @@ function showClientsContacts(id, name, contacts) {
     activeClient.className = 'card shadow-sm';
   }
   document.getElementById(id).className = 'active-client card shadow-sm';
-
-  handleShowContacts(id, name, contacts);
 
   // Adjust clientList panel
   const clientList = document.querySelector('.client-list');
@@ -87,7 +135,7 @@ function showClientsContacts(id, name, contacts) {
 }
 
 // Remove client from added list
-function removeAddedContact(id) {
+function removeTempAddedContact(id) {
   const client = document.getElementById(id);
   client.parentNode.removeChild(client);
 }
@@ -97,40 +145,58 @@ function selectContact() {
   const select = document.querySelector('.select-contacts');
   const { value } = select.options[select.selectedIndex];
 
-  if (value) {
-    const contact = JSON.parse(value);
-    const addedContact = `<div id='contact-${contact._id}' class='card added-contact'>
+  if (!value) return;
+
+  const contact = JSON.parse(value);
+
+  // Check if client already added (temp)
+  const element = document.getElementById(`contact-${contact._id}`);
+  if (element) {
+    handleNotification('warning', `${contact.email} already added!`);
+    return;
+  }
+
+  const addedContact = `<div id='contact-${contact._id}' class='card added-contact'>
   <div class="d-flex justify-content-between">
         <small class='added-contact-item'>
           <span style='padding-right: 20px;'>${contact.surname} ${contact.firstname}</span>
           <span>${contact.email}</span>
         </small>
         <small class='added-contact-item'>
-          <i onclick="removeAddedContact('contact-${contact._id}')" class="bi bi-x-square-fill btn remove-client p-0 m-0"></i>
+          <i onclick="removeTempAddedContact('contact-${contact._id}')" class="bi bi-x-square-fill btn remove-client p-0 m-0"></i>
         </small>
       </div>
       <input type="text" value='${contact._id}' name="contacts[]" hidden>
     </div>`;
 
-    const addedContacts = document.querySelector('.added-contacts');
-    addedContacts.innerHTML += addedContact;
-  }
+  const addedContacts = document.querySelector('.added-contacts');
+  addedContacts.innerHTML += addedContact;
 }
 
 // Populate clients select option
 function populateSelectContact(contacts) {
   const defaultOption = '<option value="">Select contacts</option>';
   const selectData = contacts.map((contact) => (
-    `<option id="option-${contact._id}" value='${JSON.stringify(contact)}'>${contact.surname} ${contact.firstname}</option>`
+    `<option id="option-${contact._id}" value='${JSON.stringify(contact)}'>
+      ${contact.surname} ${contact.firstname}&nbsp;&nbsp;-&nbsp;&nbsp;${contact.email}
+    </option>`
   )).join('');
   const select = document.querySelector('.select-contacts');
   select.innerHTML = defaultOption + selectData;
 }
 
-function showAddClientForm(contacts) {
-  // Populate contacts select option
-  contacts = JSON.parse(contacts);
-  populateSelectContact(contacts);
+// Creating new client
+function showAddClientForm() {
+  // Get populate clients
+  $.ajax({
+    url: '/populate/contacts',
+  }).then((response) => {
+    if (response.success) {
+      const { contacts } = response;
+      // Populate contacts select option
+      populateSelectContact(contacts);
+    }
+  });
 
   // Adjust clientList panel
   const clientList = document.querySelector('.client-list');
@@ -213,7 +279,7 @@ function validation(name, label, nameInput) {
 
 // Called when you click submit to create new client
 // Before submit, update hidden elements
-function submitNewClient(e) {
+function submitNewClient() {
   const nameInput = document.getElementById('client-name-form');
   const label = document.getElementById('client-name-form-label');
   const name = nameInput.value.trim();
@@ -231,7 +297,46 @@ function submitNewClient(e) {
   const codeElement = document.getElementById('client-code-form');
   codeElement.value = code;
 
-  // Finally, submit
-  const submit = document.getElementById('submit-add-client');
-  submit.click();
+  // Get added contacts
+  const contacts = [];
+  const newClientForm = document.getElementById('new-client-form');
+  const addedContacts = newClientForm.elements['contacts[]'];
+  if (addedContacts) {
+    for (let i = 0; i < addedContacts.length; i += 1) {
+      contacts.push(addedContacts[i].value);
+    }
+  }
+
+  const data = {
+    name, code, contacts,
+  };
+
+  $.ajax({
+    url: '/clients/create',
+    data,
+    method: 'POST',
+  }).then((response) => {
+    handleNotification(response.class, response.message);
+
+    // Append new contact to tbody
+    if (response.success) {
+      const { client } = response;
+      const cleintHtml = `<div id='${client._id}' onclick="showClientsContacts('${client._id}', '${client.name}')" class="card shadow-sm">
+        <strong>${client.name}</strong>
+        <hr/>
+        <small>Code: ${client.code}</small>
+        <small>Contacts:
+          <span id="client-contact-count-${client._id}">${client.contacts.length}</span>
+        </small>
+        </div>`;
+      const clientListBody = document.querySelector('.client-list-body');
+      clientListBody.innerHTML += cleintHtml;
+
+      // Remove all the entries
+      newClientForm.reset();
+
+      const addedContactsContainer = document.querySelector('.added-contacts');
+      addedContactsContainer.innerHTML = '';
+    }
+  });
 }

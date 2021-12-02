@@ -93,7 +93,16 @@ Initialize `packages.json`
       
       $ npm install dotenv
 
-### Toaster
-- Notifications
+### JQuery and Requests 
 
-      $ npm install vanilla-toast
+    $ npm install axios
+
+### Flash / Notifications
+
+- Bootstrap toast
+
+### Deploy to Heroku
+
+- Create Heroku app
+
+      $ heroku create clientele

@@ -1,4 +1,4 @@
-<form action="/contacts/create" method="POST">
+<form id="new-contact-form">
   <div class="form-floating mb-3">
     <input type="text" name='firstname' class="form-control" id="contact-firstname-form" placeholder="Firstname">
     <label id="contact-firstname-form-label" for="contact-firstname-form">Firstname</label>
@@ -29,6 +29,5 @@
     <!-- Dynamically populated -->
   </div>
 
-  <button onclick='submitNewContact(event)' type="button" class="btn btn-lg submit-add-contact">Add Contact</button>
-  <button type="submit" id="submit-add-contact" class="btn btn-lg submit-add-contact" hidden></button>
+  <button onclick='submitNewContact()' type="button" class="btn btn-lg submit-add-contact">Add Contact</button>
 </form>

@@ -5,13 +5,12 @@ const app = express();
 const mongoose = require('mongoose');
 const dotenv = require('dotenv');
 const expressLayouts = require('express-ejs-layouts');
-
 // Configurations
 dotenv.config();
 mongoose.Promise = global.Promise;
 
 // Mongo DB connection and initialization
-const database = process.env.MONGOLAB_URI;
+const database = process.env.MONGOLAB_URI_CLIENTELE_AFTER;
 mongoose.connect(database, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => console.log('Database Connected'))
   .catch((err) => console.log('Error:', err));

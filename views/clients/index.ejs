@@ -1,15 +1,15 @@
 <div class='client-list'>
-  <div class='row'>
+  <div class='row client-list-body'>
 
     <!-- Add New Client Button--> 
-    <div onclick="showAddClientForm('<%= JSON.stringify(contacts) %>')" class="card shadow-sm new">
+    <div onclick="showAddClientForm()" class="card shadow-sm new">
       <strong class='new-text'>
         <i class="bi bi-plus-square-fill" style="font-size: 2rem;"></i>
       </strong>
     </div>
 
     <% if (clients.length === 0) { %>
-      <h2 style='width: auto; padding-top: 30px;'>No client(s) found.</h2>
+      <h2 class="no-client-title" style='width: auto; padding-top: 30px;'>No client(s) found.</h2>
     <% } %>
 
     <!-- List of Clients -->
@@ -18,7 +18,9 @@
         <strong><%= client.name %></strong>
         <hr/>
         <small>Code: <%= client.code %></small>
-        <small>Contacts: <%= client.contacts.length %></small>
+        <small>Contacts: 
+          <span id="client-contact-count-<%= client._id %>"><%= client.contacts.length %></span>
+        </small>
       </div>
     <% } %>
   </div>
@@ -27,7 +29,7 @@
 <!-- Display contacts on Client card click -->
 <div class='card client-contacts shadow-sm'>
   <div class="card-header">
-    <small class='client-contacts-title'>First National Bank has 0 Contacts</small>
+    <small class='client-contacts-title'>Loading...</small>
     <button onclick='closeClientSideBar()' type="button" class="btn close-btn" aria-label="Close">&#x2715;</button>
   </div>
   <%- include('contacts'); %>

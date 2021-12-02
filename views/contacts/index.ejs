@@ -6,7 +6,7 @@
     <% } %>
     <div class='col align-self-end'>
       <!-- Add New Client Button--> 
-      <button onclick="showAddContactForm('<%= JSON.stringify(clients) %>')" class="btn btn-lg btn-new-contact">
+      <button onclick="showAddContactForm()" class="btn btn-lg btn-new-contact">
         <i class="bi bi-plus-square-fill" style="color: white;"></i> New Contact
       </button>
     </div>
@@ -22,13 +22,13 @@
           <th style='text-align: center;' scope="col">Clients</th>
         </tr>
       </thead>
-      <tbody>
+      <tbody class="contact-tbody">
         <% for (contact of contacts) { %>
-          <tr id='<%=contact._id%>' onclick="showContactsClients('<%=contact._id%>', '<%= contact.firstname %>', '<%= JSON.stringify(contact.clients) %>')">
+          <tr id='<%=contact._id%>' onclick="showContactsClients('<%=contact._id%>', '<%= contact.firstname %>')" style="cursor: pointer;">
             <td><%= contact.surname %></td>
             <td><%= contact.firstname %></td>
             <td><%= contact.email %></td>
-            <td style='text-align: center;'><%= contact.clients.length %></td>
+            <td id="contact-client-count-<%=contact._id%>" style='text-align: center;'><%= contact.clients.length %></td>
           </tr>
         <% } %>
       </tbody>
@@ -41,7 +41,7 @@
 <!-- Display clients on Contact row click -->
 <div class='card contact-clients shadow-sm'>
   <div class="card-header">
-    <small class='contact-clients-title'>Axel Mukwena has 0 Clients</small>
+    <small class='contact-clients-title'>Loading...</small>
     <button onclick='closeContactSideBar()' type="button" class="btn close-btn" aria-label="Close">&#x2715;</button>
   </div>
   <%- include('clients'); %>

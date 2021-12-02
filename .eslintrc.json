@@ -12,5 +12,8 @@
   },
   "rules": {
     "no-console": "off"
+  },
+  "globals": {
+    "$": true
   }
 }
