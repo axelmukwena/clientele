@@ -106,7 +106,5 @@ Initialize `packages.json`
 
       $ touch Procfile
 
-- Create Heroku app
-
-      $ heroku login
-      $ heroku create clientele-after
+      # Procfile content
+      web: node server.js
