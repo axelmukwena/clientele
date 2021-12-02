@@ -102,7 +102,11 @@ Initialize `packages.json`
 - Bootstrap toast
 
 ### Deploy to Heroku
+- Setup Procfile in root folder
+
+      $ touch Procfile
 
 - Create Heroku app
 
-      $ heroku create clientele
+      $ heroku login
+      $ heroku create clientele-after
