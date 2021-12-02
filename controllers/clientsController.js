@@ -38,17 +38,18 @@ const populateContacts = (req, res) => {
 };
 
 // Formating hundredth digit. E.g 34 => 034, 6 => 006
-function pad(n, length) {
+function alphaNumeric(n, length, alphaCode) {
   let len = length - (`${n}`).length;
-  return (len > 0 ? new Array(++len).join('0') : '') + n;
+  const numeric = (len > 0 ? new Array(++len).join('0') : '') + n;
+  return alphaCode + numeric;
 }
 
 // Creating client document in Mongo
-function handleCreation(name, code, count, contacts, res) {
+function handleCreation(name, code, contacts, res) {
   // Validate with schema
   const newClient = new Client({
     name,
-    code: code + count,
+    code,
     contacts,
   });
 
@@ -67,53 +68,55 @@ function handleCreation(name, code, count, contacts, res) {
 // Main create client method
 // App will only route when response is successful
 const createClient = (req, res) => {
-  const { name, code, contacts } = req.body;
+  const { name, contacts } = req.body;
+  const alphaCode = req.body.code;
 
   // Validate the presence of key params
-  if (!name || !code) {
+  if (!name || !alphaCode) {
     // Respond with json. Please see ajax requests in public/scripts/clients
     res.json({ success: false, class: 'danger', message: 'Client name or code is empty!' });
   } else {
-    // Check if item with `code` value already exists
-    Client.findOne({ code }).then((client) => {
-      if (client) {
-        // Respond with json. Please see ajax requests in public/scripts/clients
-        res.json({ success: false, class: 'danger', message: `Code ${code} already exists!` });
-      } else {
-        // Update count value
-        // Attach the count value to code => AAB001
-        ClientCount.findOne({ name: 'counter' }, (findError, counter) => {
-          // If client counter already exists, just update
-          if (counter) {
-            counter.count += 1;
+    // Update count value
+    // Attach the count value to code => AAB001
+    ClientCount.findOne({ name: 'counter' }, (findError, counter) => {
+      // If client counter already exists, just update
+      if (counter) {
+        counter.count += 1;
+        // get formated count
+        const code = alphaNumeric(counter.count, 3, alphaCode);
+        // Check if item with `code` value already exists
+        Client.findOne({ code }).then((client) => {
+          console.log(code);
+          if (client) {
+            // Respond with json. Please see ajax requests in public/scripts/clients
+            res.json({ success: false, class: 'danger', message: `Code ${code} already exists!` });
+          } else {
+            // Save updated counter, create client
             counter.save()
-              .then((savedCounter) => {
-                let { count } = savedCounter;
-
-                // Create Client with updated count
-                count = pad(count, 3);
-                handleCreation(name, code, count, contacts, res);
+              .then(() => {
+                handleCreation(name, code, contacts, res);
               })
               .catch((savedError) => {
                 res.json({ success: false, class: 'danger', message: savedError });
               });
-          } else {
-            // If no client counter, create one
-            const newCount = new ClientCount({
-              name: 'counter',
-              count: 1,
-            });
+          }
+        });
+      } else {
+        // If no client counter, create one
+        const newCount = new ClientCount({
+          name: 'counter',
+          count: 1,
+        });
 
-            newCount.save((newCountError, newCounter) => {
-              if (newCounter) {
-                // Create Client with updated count
-                // By default counter == 0, hence now 1
-                const count = pad(1, 3);
-                handleCreation(name, code, count, contacts, res);
-              } else {
-                res.json({ success: false, class: 'danger', message: newCountError });
-              }
-            });
+        newCount.save((newCountError, newCounter) => {
+          if (newCounter) {
+            // Create Client with updated count
+            // By default counter == 0, hence now 1
+            // get formated count
+            const code = alphaNumeric(newCounter.count, 3, alphaCode);
+            handleCreation(name, code, contacts, res);
+          } else {
+            res.json({ success: false, class: 'danger', message: newCountError });
           }
         });
       }

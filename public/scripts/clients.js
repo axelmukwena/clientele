@@ -272,7 +272,15 @@ function validation(name, label, nameInput) {
   }
 
   // Not enough characters validation
-  if (name.length < 3) {
+  // Remove all spaces, combine the entire string
+  // and validate as onecontinuos with no spaces
+  const nameWords = name.split(/\s+/);
+  let combined = '';
+  for (let i = 0; i < nameWords.length; i += 1) {
+    combined += nameWords[i];
+  }
+
+  if (combined.length < 3) {
     label.innerHTML = 'Name should have 3 or more characters';
     label.className = 'form-label-error';
     nameInput.className = 'form-control error';
