@@ -2,6 +2,8 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 
+/* -------------------------- Notification -------------------------- */
+
 // Toasting/flashing notifications set
 function handleNotification(classType, message) {
   const container = document.getElementById('toast-flash');
@@ -19,6 +21,8 @@ function handleNotification(classType, message) {
   toast.show();
 }
 
+/* -------------------------- User Interaction -------------------------- */
+
 function closeContactSideBar() {
   // Adjust contactList panel
   const contactList = document.querySelector('.contact-list');
@@ -34,6 +38,8 @@ function closeContactSideBar() {
   contactClients.style.width = '0%';
   contactClients.style.display = 'none';
 }
+
+/* -------------------------- Contact's Clients -------------------------- */
 
 // Unlink client from contact
 function unlinkClient(firstname, contactID, clientID) {
@@ -130,6 +136,8 @@ function showContactsClients(id) {
   contactClients.style.display = 'block';
 }
 
+/* -------------------------- New Contact -------------------------- */
+
 // Remove client from temporarily added list
 function removeTempAddedClient(id) {
   const client = document.getElementById(id);
@@ -206,6 +214,8 @@ function showAddContactForm() {
   contactAdd.style.width = '38%';
   contactAdd.style.display = 'block';
 }
+
+/* -------------------------- New Contact Submit -------------------------- */
 
 // Validate email format
 function emailValidation(email, label, input) {

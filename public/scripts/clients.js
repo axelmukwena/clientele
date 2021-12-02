@@ -3,6 +3,7 @@
 /* eslint-disable no-param-reassign */
 /* eslint-disable no-unused-vars */
 
+/* -------------------------- Notification -------------------------- */
 // Toasting/flashing notifications set
 function handleNotification(classType, message) {
   const container = document.getElementById('toast-flash');
@@ -20,6 +21,8 @@ function handleNotification(classType, message) {
   toast.show();
 }
 
+/* -------------------------- User Interaction -------------------------- */
+
 // when you click the close/x on the side bar
 function closeClientSideBar() {
   // Adjust clientList panel
@@ -36,6 +39,8 @@ function closeClientSideBar() {
   clientContacts.style.width = '0%';
   clientContacts.style.display = 'none';
 }
+
+/* -------------------------- Client's Contacts -------------------------- */
 
 // Unlink contact from client
 function unlinkContact(name, clientID, contactID) {
@@ -134,6 +139,8 @@ function showClientsContacts(id) {
   clientContacts.style.display = 'block';
 }
 
+/* -------------------------- New Client -------------------------- */
+
 // Remove client from added list
 function removeTempAddedContact(id) {
   const client = document.getElementById(id);
@@ -213,6 +220,8 @@ function showAddClientForm() {
   clientAdd.style.display = 'block';
 }
 
+/* -------------------------- New Client Submit -------------------------- */
+
 function createCode(name) {
   // Split by spaces
   const itemsOld = name.split(/\s+/);
@@ -291,7 +300,14 @@ function submitNewClient() {
   }
 
   // Create a code based on the name
-  const code = createCode(name).toUpperCase();
+  let code = createCode(name);
+
+  // If validation and creation of code fails, not enough characters
+  if (!code) {
+    handleNotification('danger', 'Not enough characters for name');
+    return;
+  }
+  code = code.toUpperCase();
 
   // Update code value
   const codeElement = document.getElementById('client-code-form');
