@@ -10,7 +10,7 @@ dotenv.config();
 mongoose.Promise = global.Promise;
 
 // Mongo DB connection and initialization
-const database = process.env.MONGOLAB_URI_CLIENTELE_AFTER;
+const database = process.env.MONGOLAB_URI_AFTER;
 mongoose.connect(database, { useUnifiedTopology: true, useNewUrlParser: true })
   .then(() => console.log('Database Connected'))
   .catch((err) => console.log('Error:', err));
