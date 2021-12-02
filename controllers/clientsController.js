@@ -38,10 +38,15 @@ const populateContacts = (req, res) => {
 };
 
 // Formating hundredth digit. E.g 34 => 034, 6 => 006
-function alphaNumeric(n, length, alphaCode) {
-  let len = length - (`${n}`).length;
-  const numeric = (len > 0 ? new Array(++len).join('0') : '') + n;
-  return alphaCode + numeric;
+function alphaNumeric(count, length, alphaCode) {
+  // find how many more placeholders we need
+  let diff = length - (`${count}`).length;
+  // If difference is more than 0, create an empty array
+  // of size difference, join the array elements by substituting
+  // each empty value with '0'
+  const formatedCount = (diff > 0 ? new Array(++diff).join('0') : '') + count;
+  // Combine alpha with numeric, viola
+  return alphaCode + formatedCount;
 }
 
 // Creating client document in Mongo

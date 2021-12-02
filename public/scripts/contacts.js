@@ -228,6 +228,7 @@ function emailValidation(email, label, input) {
   }
 
   // Email pattern validation
+  // Inspiration https://www.w3resource.com/javascript/form/email-validation.php
   const pattern = /^((?!\.)[\w\-_.]*[^.])(@\w+)(\.\w+(\.\w+)?[^.\W])$/;
   if (!pattern.test(email)) {
     label.innerHTML = 'Email incorrect format';
