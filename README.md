@@ -108,3 +108,5 @@ Initialize `packages.json`
 
       # Procfile content
       web: node server.js
+
+- Remember to setup env. variables
